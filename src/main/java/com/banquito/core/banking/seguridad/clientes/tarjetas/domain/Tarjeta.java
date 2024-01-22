@@ -31,7 +31,4 @@ public class Tarjeta {
 
     private List<Acceso> accesos;
 
-
-
-
 }
