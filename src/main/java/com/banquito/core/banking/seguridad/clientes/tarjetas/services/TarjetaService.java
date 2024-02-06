@@ -30,7 +30,7 @@ public class TarjetaService {
             tarjetaRepository.save(tarjeta);
             log.info("Se creó el registro de logueo de la tarjeta: {}", tarjeta);
         } catch (Exception e) {
-            throw new RuntimeException("Error al crear el registro de logueo de la tarjeta");
+            throw new RuntimeException("Error al crear el registro de logueo de la tarjeta...");
         }
     }
 
