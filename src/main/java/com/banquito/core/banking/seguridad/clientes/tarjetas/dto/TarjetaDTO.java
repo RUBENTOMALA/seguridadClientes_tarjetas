@@ -1,5 +1,10 @@
 package com.banquito.core.banking.seguridad.clientes.tarjetas.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.banquito.core.banking.seguridad.clientes.tarjetas.domain.Acceso;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,9 +12,18 @@ import lombok.Data;
 @Data
 public class TarjetaDTO {
     private String idTarjeta;
-    private Integer codTarjeta;
+    private String codTarjeta;
     private String numTarjeta;
     private String claveTarjeta;
+    private List<AccesoDTO> accesos;
+
+    public void addAcceso(AccesoDTO acceso) {
+        if (this.accesos == null) {
+            this.accesos = new ArrayList<>();
+        }
+        this.accesos.add(acceso);
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -27,6 +41,8 @@ public class TarjetaDTO {
             return false;
         return true;
     }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -40,5 +56,5 @@ public class TarjetaDTO {
         return "TarjetaDTO [idTarjeta=" + idTarjeta + ", codTarjeta=" + codTarjeta + ", numTarjeta=" + numTarjeta
                 + ", claveTarjeta=" + claveTarjeta + "]";
     }
-    
+
 }

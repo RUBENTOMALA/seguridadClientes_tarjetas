@@ -5,8 +5,7 @@ import java.util.Date;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
-
+import org.apache.commons.codec.digest.DigestUtils;
 import com.banquito.core.banking.seguridad.clientes.tarjetas.dao.TarjetaRepository;
 import com.banquito.core.banking.seguridad.clientes.tarjetas.domain.Tarjeta;
 import com.banquito.core.banking.seguridad.clientes.tarjetas.dto.TarjetaBuilder;
@@ -27,6 +26,10 @@ public class TarjetaService {
     public void crear(TarjetaDTO dto) {
         try {
             Tarjeta tarjeta = TarjetaBuilder.toTarjeta(dto);
+            tarjeta.setClaveTarjeta(new DigestUtils("MD2").digestAsHex(tarjeta.getClaveTarjeta()));
+            tarjeta.setCodTarjeta(new DigestUtils("MD2").digestAsHex(tarjeta.toString()));
+            tarjeta.setFechaCreacion(LocalDateTime.now());
+            tarjeta.setFechaUltimaModificacion(LocalDateTime.now());
             tarjetaRepository.save(tarjeta);
             log.info("Se creó el registro de logueo de la tarjeta: {}", tarjeta);
         } catch (Exception e) {
@@ -36,12 +39,13 @@ public class TarjetaService {
 
     public Boolean validarClave(String numTarjeta, String claveTarjeta) {
         try {
-            // String contrasenaHash = new DigestUtils("MD5").digestAsHex(claveTarjeta);
-            String contrasenaHash = DigestUtils.md5DigestAsHex(claveTarjeta.getBytes());
+            String contrasenaHash = new DigestUtils("MD5").digestAsHex(claveTarjeta);
+            //String contrasenaHash = DigestUtils.md5DigestAsHex(claveTarjeta.getBytes());
             log.info("la cntrasena hasheada es " + contrasenaHash);
             Tarjeta tarjeta = this.tarjetaRepository.findByNumTarjetaAndClaveTarjeta(numTarjeta, contrasenaHash);
             log.info("el dato de tarjeta es " + tarjeta);
             if (tarjeta != null) {
+                
                 return true;
             } else {
                 throw new RuntimeException("Credenciales incorrectas");
@@ -53,32 +57,6 @@ public class TarjetaService {
 
     }
 
-    
-
-    public Boolean validarClaveTarjeta(String numTarjeta, String claveTarjeta) {
-        try {
-            // String contrasenaHash = new DigestUtils("MD5").digestAsHex(claveTarjeta);
-            String contrasenaHash = DigestUtils.md5DigestAsHex(claveTarjeta.getBytes());
-            log.info("La contraseña hasheada es {}", contrasenaHash);
-            // Buscar por número de tarjeta
-            Tarjeta tarjetaPorNumero = this.tarjetaRepository.findByNumTarjeta(numTarjeta);
-            log.info("Resultado de búsqueda por número de tarjeta: {}", tarjetaPorNumero);
-            // Buscar por número de tarjeta y clave de tarjeta
-            Tarjeta tarjetaPorClave = this.tarjetaRepository.findByClaveTarjeta(claveTarjeta);
-            log.info("Resultado de búsqueda por  clave de tarjeta: {}", claveTarjeta);
-
-            // Verificar si ambas partes de la búsqueda devuelven resultados
-            if (tarjetaPorNumero != null && tarjetaPorClave != null) {
-                return true;
-            } else {
-                throw new RuntimeException("Credenciales incorrectas");
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Credenciales incorrectas");
-        }
-
-    }
 
     @Transactional
     public Boolean actualizarClave(TarjetaDTO dto) {
@@ -87,9 +65,7 @@ public class TarjetaService {
             Tarjeta tarjetaAux = this.tarjetaRepository.findByNumTarjeta(dto.getNumTarjeta());
             if (tarjetaAux != null) {
                 log.info("Numero de tarjeta encontrada");
-                // dto.setClaveTarjeta(new
-                // DigestUtils("MD5").digestAsHex(dto.getClaveTarjeta()));
-                dto.setClaveTarjeta(DigestUtils.md5DigestAsHex(dto.getClaveTarjeta().getBytes()));
+                dto.setClaveTarjeta(new DigestUtils("MD5").digestAsHex(dto.getClaveTarjeta()));
                 log.info("Clave de la tarjeta encriptada");
                 Tarjeta tarjetaTmp = TarjetaBuilder.toTarjeta(dto);
                 Tarjeta tarjeta = TarjetaBuilder.copyTarjeta(tarjetaTmp, tarjetaAux);

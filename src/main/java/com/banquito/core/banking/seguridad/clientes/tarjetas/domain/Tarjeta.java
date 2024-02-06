@@ -1,6 +1,7 @@
 package com.banquito.core.banking.seguridad.clientes.tarjetas.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
@@ -14,16 +15,15 @@ import lombok.Setter;
 
 @Getter @Setter
 @NoArgsConstructor
-@Document(collection = "Tarjetas")
+@Document(collection = "segtarjetas")
 public class Tarjeta {
 
     @Id
     private String id;
-    @Indexed(unique = true)
-    private String idTarjeta;
 
+    @Indexed(unique = true)
     @Field("codigo_tarjeta")
-    private Integer codTarjeta;
+    private String codTarjeta;
 
     @Field("numero_tarjeta")
     private String numTarjeta;
@@ -37,10 +37,11 @@ public class Tarjeta {
     @Field("fecha_ultima_modificacion")
     private LocalDateTime fechaUltimaModificacion;
 
+    private List<Acceso> accesos;
+
     @Version
     private Long version;
 
-    //private List<Acceso> accesos;
     
     public Tarjeta(String id) {
         this.id = id;
@@ -73,9 +74,9 @@ public class Tarjeta {
 
     @Override
     public String toString() {
-        return "Tarjeta [id=" + id + ", idTarjeta=" + idTarjeta + ", codTarjeta=" + codTarjeta + ", numTarjeta="
-                + numTarjeta + ", claveTarjeta=" + claveTarjeta + ", fechaCreacion=" + fechaCreacion
-                + ", fechaUltimaModificacion=" + fechaUltimaModificacion + ", version=" + version + "]";
+        return "Tarjeta [id=" + id + ", codTarjeta=" + codTarjeta + ", numTarjeta=" + numTarjeta + ", claveTarjeta="
+                + claveTarjeta + ", fechaCreacion=" + fechaCreacion + ", fechaUltimaModificacion="
+                + fechaUltimaModificacion + ", version=" + version + "]";
     }
 
 
