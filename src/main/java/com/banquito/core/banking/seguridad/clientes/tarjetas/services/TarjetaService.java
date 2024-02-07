@@ -66,7 +66,7 @@ public class TarjetaService {
             if (tarjetaAux != null) {
                 log.info("Numero de tarjeta encontrada");
                 dto.setClaveTarjeta(new DigestUtils("MD5").digestAsHex(dto.getClaveTarjeta()));
-                log.info("Clave de la tarjeta encriptada");
+                log.info("Clave de la tarjeta encriptada"); 
                 Tarjeta tarjetaTmp = TarjetaBuilder.toTarjeta(dto);
                 Tarjeta tarjeta = TarjetaBuilder.copyTarjeta(tarjetaTmp, tarjetaAux);
                 tarjeta.setFechaUltimaModificacion(LocalDateTime.now());
